@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 from src.player import Player
 from src.battle import Battle
+from src.config_manager import game_config
 
 
 def clear_screen():
@@ -36,7 +37,7 @@ def display_title():
     title = """
     ╔══════════════════════════════════════════════════════════╗
     ║                 PyBattleLootGame                         ║
-    ║                  1v1 战斗模拟器                          ║
+                        终端战斗模拟器                            
     ╚══════════════════════════════════════════════════════════╝
     """
     print(title)
@@ -47,7 +48,7 @@ def get_player_choice() -> str:
     time.sleep(0.2)
     while True:
         print("\n请选择操作:")
-        print("1. 开始新的1v1战斗")
+        print("1. 开始新的战斗")
         print("2. 查看游戏说明")
         print("3. 退出游戏")
 
@@ -166,31 +167,7 @@ def start_battle():
 
 def show_game_info():
     """显示游戏说明"""
-    info = """
-    ╔══════════════════════════════════════════════════════════╗
-    ║                      游戏说明                            ║
-    ╚══════════════════════════════════════════════════════════╝
-    
-    🎮 游戏玩法:
-    • 这是一个回合制1v1战斗模拟器
-    • 选择你的角色，与对手进行战斗
-    • 每回合角色会自动攻击对方
-    • 战斗持续到有一方生命值归零
-    
-    ⚔️  角色属性:
-    • 生命值 (Health): 角色的血量，降到0时战败
-    • 攻击力 (Attack): 决定造成伤害的基础数值
-    • 防御力 (Defense): 减少承受的伤害
-    
-    🎯 战斗机制:
-    • 攻击伤害 = 攻击力 × 随机倍数(0.8-1.2) - 目标防御力
-    • 10%概率产生暴击，伤害提升50%
-    • 每次攻击至少造成1点伤害
-    
-    🏆 胜利条件:
-    • 将对手的生命值降到0
-    • 或在50回合内保持更高的生命值
-    """
+    info = game_config.get_game_info()
     print(info)
     input("\n按回车键返回主菜单...")
 

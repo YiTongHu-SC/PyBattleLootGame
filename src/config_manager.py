@@ -127,6 +127,55 @@ class GameConfig:
             self.config.add_section(section)
         
         self.config.set(section, key, value)
+    
+    def get_game_info(self) -> str:
+        """从配置文件获取游戏说明信息"""
+        try:
+            # 游戏说明配置文件路径
+            project_root = os.path.dirname(os.path.dirname(__file__))
+            info_config_path = os.path.join(project_root, 'config', 'game_info.ini')
+            
+            if os.path.exists(info_config_path):
+                info_config = configparser.ConfigParser()
+                info_config.read(info_config_path, encoding='utf-8')
+                
+                if info_config.has_option('GAME_INFO', 'content'):
+                    return info_config.get('GAME_INFO', 'content')
+            
+            # 如果文件不存在或读取失败，返回默认说明
+            return self._get_default_game_info()
+            
+        except Exception as e:
+            print(f"警告: 读取游戏说明失败 ({e})，使用默认说明")
+            return self._get_default_game_info()
+    
+    def _get_default_game_info(self) -> str:
+        """获取默认游戏说明"""
+        return """
+    ╔══════════════════════════════════════════════════════════╗
+    ║                      游戏说明                            ║
+    ╚══════════════════════════════════════════════════════════╝
+    
+    🎮 游戏玩法:
+    • 这是一个回合制1v1战斗模拟器
+    • 选择你的角色，与对手进行战斗
+    • 每回合角色会自动攻击对方
+    • 战斗持续到有一方生命值归零
+    
+    ⚔️ 角色属性:
+    • 生命值 (Health): 角色的血量，降到0时战败
+    • 攻击力 (Attack): 决定造成伤害的基础数值
+    • 防御力 (Defense): 减少承受的伤害
+    
+    🎯 战斗机制:
+    • 攻击伤害 = 攻击力 × 随机倍数(0.8-1.2) - 目标防御力
+    • 10%概率产生暴击，伤害提升50%
+    • 每次攻击至少造成1点伤害
+    
+    🏆 胜利条件:
+    • 将对手的生命值降到0
+    • 或在50回合内保持更高的生命值
+    """
 
 
 # 全局配置实例
