@@ -61,16 +61,8 @@ def get_player_choice() -> str:
 
 
 def create_preset_characters() -> list:
-    """创建预设角色"""
-    characters = [
-        {"name": "剑士", "health": 100, "attack": 25, "defense": 8},
-        {"name": "法师", "health": 80, "attack": 35, "defense": 5},
-        {"name": "弓箭手", "health": 90, "attack": 30, "defense": 6},
-        {"name": "盾卫", "health": 120, "attack": 20, "defense": 12},
-        {"name": "刺客", "health": 70, "attack": 40, "defense": 4},
-        {"name": "圣骑士", "health": 110, "attack": 22, "defense": 10},
-    ]
-    return characters
+    """创建预设角色（从配置文件读取）"""
+    return game_config.get_character_presets()
 
 
 def select_character(player_num: int, characters: list) -> Player:
