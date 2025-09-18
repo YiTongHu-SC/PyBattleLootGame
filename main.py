@@ -3,18 +3,11 @@ PyBattleLootGame 主程序入口
 运行1v1战斗模拟游戏
 """
 
-import os
-import sys
 import random
 import time
 from typing import Tuple
 
-# 添加src目录到Python路径
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
-
-from src.player import Player
-from src.battle import Battle
-from src.config_manager import game_config
+from src import Player, Battle, game_config, character_name_generator
 
 
 def clear_screen():
@@ -35,10 +28,10 @@ def clear_screen():
 def display_title():
     """显示游戏标题"""
     title = """
-    ╔══════════════════════════════════════════════════════════╗
-    ║                 PyBattleLootGame                         ║
-                        终端战斗模拟器                            
-    ╚══════════════════════════════════════════════════════════╝
+    ╔═══════════════════════════════════════════════════╗
+                    PyBattleLootGame                         
+                      终端战斗模拟器                            
+    ╚═══════════════════════════════════════════════════╝
     """
     print(title)
 
@@ -65,96 +58,92 @@ def create_preset_characters() -> list:
     return game_config.get_character_presets()
 
 
-def select_character(player_num: int, characters: list) -> Player:
+def select_character(characters: list) -> Player:
     """让玩家选择角色"""
-    print(f"\n玩家{player_num} 请选择你的角色:")
+    print(f"\n请选择你的角色职业:")
     print("-" * 50)
 
+    ## 展示角色列表
     for i, char in enumerate(characters, 1):
         print(
-            f"{i}. {char['name']:8} | "
+            f"{i}. {char['class']:8} | "
             f"生命值: {char['health']:3} | "
             f"攻击力: {char['attack']:2} | "
             f"防御力: {char['defense']:2}"
         )
 
-    while True:
+    get_player_choice = False
+    player_name = ""
+    char_data = {}
+    while not get_player_choice:
         try:
-            choice = int(input(f"\n玩家{player_num} 选择角色 (1-{len(characters)}): "))
+            choice = int(input(f"\n玩家请选择角色 (1-{len(characters)}): "))
             if 1 <= choice <= len(characters):
                 char_data = characters[choice - 1]
-                player_name = f"玩家{player_num}({char_data['name']})"
-                return Player(
-                    name=player_name,
-                    health=char_data["health"],
-                    attack=char_data["attack"],
-                    defense=char_data["defense"],
+
+                # 询问是否使用随机名称
+                print(f"\n已选择角色职业: {char_data['class']}")
+                name_choice = (
+                    input("是否使用随机角色名称？(y/n，默认n): ").strip().lower()
                 )
+
+                if name_choice in ["y", "yes", "Y", "是"]:
+                    random_name = character_name_generator.get_random_name()
+                    player_name = f"玩家({random_name})"
+                    print(f"🎲 随机角色名称: {random_name}")
+                else:
+                    player_name = f"玩家({char_data['name']})"
+
+                get_player_choice = True
+
             else:
                 print(f"❌ 请输入1到{len(characters)}之间的数字")
         except ValueError:
             print("❌ 请输入有效的数字")
 
+    ## 角色名字
+    while not player_name:
+        player_name = input("请输入你的角色名字: ").strip()
+        if not player_name:
+            print("❌ 角色名字不能为空，请重新输入。")
 
-def create_random_battle() -> Tuple[Player, Player]:
-    """创建随机战斗"""
-    characters = create_preset_characters()
-
-    # 随机选择两个不同的角色
-    char1_data = random.choice(characters)
-    char2_data = random.choice(characters)
-
-    player1 = Player(
-        name=f"随机角色1({char1_data['name']})",
-        health=char1_data["health"],
-        attack=char1_data["attack"],
-        defense=char1_data["defense"],
+    return Player(
+        name=player_name,
+        character_class=char_data["class"],
+        health=char_data["health"],
+        attack=char_data["attack"],
+        defense=char_data["defense"],
     )
-
-    player2 = Player(
-        name=f"随机角色2({char2_data['name']})",
-        health=char2_data["health"],
-        attack=char2_data["attack"],
-        defense=char2_data["defense"],
-    )
-
-    return player1, player2
+    pass  # 这一行理论上不会被执行到
 
 
 def start_battle():
     """开始战斗"""
     characters = create_preset_characters()
 
+    ## 角色选择界面
     print("\n" + "=" * 60)
-    print("选择战斗模式:")
-    print("1. 手动选择角色")
-    print("2. 随机对战")
-
-    while True:
-        mode = input("\n请选择模式 (1-2): ").strip()
-        if mode == "1":
-            player1 = select_character(1, characters)
-            player2 = select_character(2, characters)
-            break
-        elif mode == "2":
-            player1, player2 = create_random_battle()
-            print(f"\n🎲 随机匹配完成！")
-            print(f"   {player1.name}")
-            print(f"   VS")
-            print(f"   {player2.name}")
-            break
-        else:
-            print("❌ 请输入1或2")
-
+    print("选择你的角色:")
+    player1 = select_character(characters)
+    ## 随机敌人
+    enemy_data = random.choice(characters)
+    enemy_name = character_name_generator.get_random_name()
+    enemy = Player(
+        name=enemy_name,
+        character_class=enemy_data["class"],
+        health=enemy_data["health"],
+        attack=enemy_data["attack"],
+        defense=enemy_data["defense"],
+    )
     # 创建并开始战斗
-    battle = Battle(player1, player2)
+    battle = Battle(player1, enemy)
     battle_result = battle.fight_until_end()
 
     # 显示战斗摘要
     summary = battle.get_battle_summary()
     print(f"\n📊 战斗统计:")
     print(f"   {player1.name} 总伤害: {summary['player1_damage_dealt']}")
-    print(f"   {player2.name} 总伤害: {summary['player2_damage_dealt']}")
+    print(f"   {enemy.name} 总伤害: {summary['player2_damage_dealt']}")
 
 
 def show_game_info():

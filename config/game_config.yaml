@@ -17,27 +17,27 @@ display:
 
 # 预设角色属性
 characters:
-  - name: "剑士"
+  - class: "剑士"
     health: 100
     attack: 25
     defense: 8
-  - name: "法师"
+  - class: "法师"
     health: 80
     attack: 35
     defense: 5
-  - name: "弓箭手"
+  - class: "弓箭手"
     health: 90
     attack: 30
     defense: 6
-  - name: "盾卫"
+  - class: "盾卫"
     health: 120
     attack: 20
     defense: 12
-  - name: "刺客"
+  - class: "刺客"
     health: 70
     attack: 40
     defense: 4
-  - name: "圣骑士"
+  - class: "圣骑士"
     health: 110
     attack: 22
     defense: 10

@@ -95,11 +95,11 @@ class GameConfig:
         validated_characters = []
         for char in characters:
             if isinstance(char, dict) and all(
-                key in char for key in ["name", "health", "attack", "defense"]
+                key in char for key in ["class", "health", "attack", "defense"]
             ):
                 validated_characters.append(
                     {
-                        "name": char["name"],
+                        "class": char["class"],
                         "health": int(char["health"]),
                         "attack": int(char["attack"]),
                         "defense": int(char["defense"]),
