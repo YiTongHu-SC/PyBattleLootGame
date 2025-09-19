@@ -7,7 +7,13 @@ import random
 import time
 from typing import Tuple
 
-from src import Player, Battle, game_config, character_name_generator, character_data_loader
+from src import (
+    Player,
+    Battle,
+    game_config,
+    character_name_generator,
+    character_data_loader,
+)
 
 
 def clear_screen():
@@ -126,7 +132,7 @@ def start_battle():
     player1.pre_name = "【玩家】"
     ## 随机敌人
     enemy_data = random.choice(characters)
-    enemy_name = character_name_generator.get_random_name()
+    enemy_name = character_name_generator.get_random_name(player1.name)
     enemy = Player(
         name=enemy_name,
         character_class=enemy_data["class"],

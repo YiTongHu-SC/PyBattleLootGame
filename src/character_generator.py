@@ -183,17 +183,20 @@ class CharacterNameGenerator:
             print(f"❌ 加载角色名称时发生错误: {e}")
             self._character_names = ["错误角色"]
 
-    def get_random_name(self) -> str:
+    def get_random_name(self, except_name: str = "") -> str:
         """
         随机获取一个角色名称
-
-        Returns:
-            str: 随机角色名称
+        
+        except_name: 如果生成的名称与此名称相同，则重新生成
+        
+        return: 随机角色名称
         """
         if not self._character_names:
             return "无名角色"
-
-        return random.choice(self._character_names)
+        temp_name = random.choice(self._character_names)
+        if except_name == temp_name:
+            return self.get_random_name(except_name)
+        return temp_name
 
     def get_all_names(self) -> List[str]:
         """
