@@ -17,7 +17,7 @@
                 "python",
                 "main.py"
             ],
-            "group": "build"
+            "group": "test"
         },
         {
             "label": "pipenv shell",
@@ -29,11 +29,18 @@
             "group": "build"
         },
         {
+            "label": "install pyinstaller",
+            "type": "shell",
+            "command": "pipenv run pip install pyinstaller",
+            "group": "build",
+            "detail": "在 pipenv 虚拟环境中安装 pyinstaller"
+        },
+        {
             "label": "build exe",
             "type": "shell",
-            "command": "pip install pyinstaller; pyinstaller --onefile main.py",
+            "command": "pipenv run python build_exe.py",
             "group": "build",
-            "detail": "自动安装 PyInstaller 并打包 main.py 为 exe 文件"
+            "detail": "根据 config/build.yaml 配置打包"
         }
     ]
 }

@@ -1,0 +1,4 @@
+name: PyBattleLootGame
+version: 1.0.0
+icon: assets/game.ico
+entry: main.py
