@@ -1,0 +1,39 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "echo",
+            "type": "shell",
+            "command": "echo Hello"
+        },
+        {
+            "label": "run game",
+            "type": "shell",
+            "command": "pipenv",
+            "args": [
+                "run",
+                "python",
+                "main.py"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "pipenv shell",
+            "type": "shell",
+            "command": "pipenv",
+            "args": [
+                "shell"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "build exe",
+            "type": "shell",
+            "command": "pip install pyinstaller; pyinstaller --onefile main.py",
+            "group": "build",
+            "detail": "自动安装 PyInstaller 并打包 main.py 为 exe 文件"
+        }
+    ]
+}

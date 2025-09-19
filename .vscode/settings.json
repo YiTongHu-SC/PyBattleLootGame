@@ -1,0 +1,5 @@
+{
+    "python.analysis.typeCheckingMode": "standard",
+    "chat.agent.maxRequests": 128,
+    "python.terminal.activateEnvironment": false
+}
