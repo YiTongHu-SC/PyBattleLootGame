@@ -92,7 +92,7 @@ class Battle:
             战斗结果
         """
         print(f"\n🔥 战斗开始！🔥")
-        print(f"{self.player1.name} VS {self.player2.name}")
+        print(f"{self.player1.get_full_name()} VS {self.player2.get_full_name()}")
         print("="*60)
         
         # 显示初始状态

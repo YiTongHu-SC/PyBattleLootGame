@@ -29,6 +29,7 @@ class Player:
         self.attack = attack
         self.defense = defense
         self.is_alive = True
+        self.pre_name = ""  # 称号前缀
 
     def take_damage(self, damage: int) -> int:
         """
@@ -109,6 +110,7 @@ class Player:
         """获取角色状态信息"""
         return {
             "name": self.name,
+            "class": self.character_class,
             "health": f"{self.current_health}/{self.max_health}",
             "health_percentage": self.get_health_percentage(),
             "attack": self.attack,
@@ -126,7 +128,11 @@ class Player:
         status = "存活" if self.is_alive else "阵亡"
 
         return (
-            f"{self.name} [{status}]\n"
+            f"{self.get_full_name()} [{status}]\n"
             f"生命值: {health_bar} {self.current_health}/{self.max_health} ({health_percentage:.1f}%)\n"
             f"攻击力: {self.attack} | 防御力: {self.defense}"
         )
+
+    def get_full_name(self) -> str:
+        """获取带前缀的全名"""
+        return f"{self.pre_name} {self.name} [{self.character_class}]"

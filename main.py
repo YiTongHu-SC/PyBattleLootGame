@@ -89,7 +89,7 @@ def select_character(characters: list) -> Player:
 
                 if name_choice in ["y", "yes", "Y", "是"]:
                     random_name = character_name_generator.get_random_name()
-                    player_name = f"玩家({random_name})"
+                    player_name = f"{random_name}"
                     print(f"🎲 随机角色名称: {random_name}")
 
                 get_player_choice = True
@@ -123,6 +123,7 @@ def start_battle():
     print("\n" + "=" * 60)
     # print("选择你的角色:")
     player1 = select_character(characters)
+    player1.pre_name = "【玩家】"
     ## 随机敌人
     enemy_data = random.choice(characters)
     enemy_name = character_name_generator.get_random_name()
