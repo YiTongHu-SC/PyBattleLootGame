@@ -94,14 +94,19 @@ class Battle:
 
         # 显示初始状态
         self._display_battle_status()
-
+        self.auto_advance = False
         while not self.battle_ended and self.round_number < max_rounds:
-            input("\n按回车键继续到下一回合...")
-            round_result = self.execute_round()
+            if not self.auto_advance:
+                choice = input("\n回车键继续下一回合（输入A进入自动模式）...")
+                if choice.strip().lower() == "a":
+                    print("进入自动战斗模式...")
+                    self.auto_advance = True
+                else:
+                    self.auto_advance = False
 
+            round_result = self.execute_round()
             # 显示回合结果
             self._display_round_result(round_result)
-
             # 显示当前状态
             self._display_battle_status()
 
