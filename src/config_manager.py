@@ -55,14 +55,6 @@ class GameConfig:
                 "auto_advance_battle": False,
                 "battle_delay_seconds": 1,
             },
-            "characters": [
-                {"name": "剑士", "health": 100, "attack": 25, "defense": 8},
-                {"name": "法师", "health": 80, "attack": 35, "defense": 5},
-                {"name": "弓箭手", "health": 90, "attack": 30, "defense": 6},
-                {"name": "盾卫", "health": 120, "attack": 20, "defense": 12},
-                {"name": "刺客", "health": 70, "attack": 40, "defense": 4},
-                {"name": "圣骑士", "health": 110, "attack": 22, "defense": 10},
-            ],
         }
 
     def get_battle_config(self) -> Dict[str, Any]:
@@ -86,29 +78,6 @@ class GameConfig:
             "auto_advance_battle": display_config.get("auto_advance_battle", False),
             "battle_delay_seconds": display_config.get("battle_delay_seconds", 1),
         }
-
-    def get_character_presets(self) -> List[Dict[str, Any]]:
-        """获取预设角色列表"""
-        characters = self.config.get("characters", [])
-
-        # 确保每个角色都有必要的字段
-        validated_characters = []
-        for char in characters:
-            if isinstance(char, dict) and all(
-                key in char for key in ["class", "health", "attack", "defense"]
-            ):
-                validated_characters.append(
-                    {
-                        "class": char["class"],
-                        "health": int(char["health"]),
-                        "attack": int(char["attack"]),
-                        "defense": int(char["defense"]),
-                    }
-                )
-            else:
-                print(f"警告: 角色配置格式错误，跳过: {char}")
-
-        return validated_characters
 
     def save_config(self):
         """保存配置到YAML文件"""

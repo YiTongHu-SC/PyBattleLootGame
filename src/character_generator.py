@@ -5,7 +5,128 @@
 import json
 import random
 import os
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
+
+
+class CharacterDataLoader:
+    """角色数据加载器 - 专门处理角色预制数据"""
+    
+    def __init__(self, data_file_path: Optional[str] = None):
+        """
+        初始化角色数据加载器
+        
+        Args:
+            data_file_path: character_data.json 文件路径，如果为None则使用默认路径
+        """
+        if data_file_path is None:
+            # 默认路径：从src目录向上查找data目录
+            current_dir = os.path.dirname(__file__)
+            project_root = os.path.dirname(current_dir)
+            data_file_path = os.path.join(project_root, "data", "character_data.json")
+        
+        self.data_file_path = data_file_path
+        self._character_presets: List[Dict[str, Any]] = []
+        self._load_character_data()
+    
+    def _load_character_data(self) -> None:
+        """从JSON文件加载角色预制数据"""
+        try:
+            with open(self.data_file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                self._character_presets = data.get('character_presets', [])
+            
+            if not self._character_presets:
+                raise ValueError("角色预制数据为空")
+            
+            # 验证每个角色数据的完整性
+            validated_presets = []
+            for char in self._character_presets:
+                if isinstance(char, dict) and all(
+                    key in char for key in ["class", "health", "attack", "defense"]
+                ):
+                    validated_presets.append({
+                        "class": str(char["class"]),
+                        "health": int(char["health"]),
+                        "attack": int(char["attack"]),
+                        "defense": int(char["defense"]),
+                    })
+                else:
+                    print(f"⚠️ 角色数据格式错误，跳过: {char}")
+            
+            self._character_presets = validated_presets
+            print(f"✅ 成功加载 {len(self._character_presets)} 个角色预制数据")
+            
+        except FileNotFoundError:
+            print(f"❌ 找不到角色数据配置文件: {self.data_file_path}")
+            # 提供默认角色数据作为备选
+            self._character_presets = [
+                {"name": "剑士", "health": 100, "attack": 25, "defense": 8},
+                {"name": "法师", "health": 80, "attack": 35, "defense": 5},
+                {"name": "弓箭手", "health": 90, "attack": 30, "defense": 6},
+                {"name": "盾卫", "health": 120, "attack": 20, "defense": 12},
+                {"name": "刺客", "health": 70, "attack": 40, "defense": 4},
+                {"name": "圣骑士", "health": 110, "attack": 22, "defense": 10},
+            ]
+            print("🔄 使用默认角色数据")
+            
+        except json.JSONDecodeError as e:
+            print(f"❌ JSON配置文件格式错误: {e}")
+            
+        except Exception as e:
+            print(f"❌ 加载角色数据时发生错误: {e}")
+    
+    def get_character_presets(self) -> List[Dict[str, Any]]:
+        """
+        获取所有角色预制数据
+        
+        Returns:
+            List[Dict]: 角色预制数据列表，每个字典包含 name, health, attack, defense
+        """
+        return self._character_presets.copy()
+    
+    def get_random_character(self) -> Dict[str, Any]:
+        """
+        随机获取一个角色预制数据
+        
+        Returns:
+            Dict: 随机角色数据
+        """
+        if not self._character_presets:
+            return dict()
+        
+        return random.choice(self._character_presets).copy()
+    
+    def get_character_by_class(self, class_name: str) -> Optional[Dict[str, Any]]:
+        """
+        根据职业获取特定角色数据
+        
+        Args:
+            class_name: 角色职业名称
+            
+        Returns:
+            Dict or None: 找到的角色数据，如果未找到则返回None
+        """
+        for char in self._character_presets:
+            if char["class"] == class_name:
+                return char.copy()
+        return None
+    
+    def get_character_classes(self) -> List[str]:
+        """
+        获取所有角色职业列表
+        
+        Returns:
+            List[str]: 角色职业列表
+        """
+        return [char["class"] for char in self._character_presets]
+    
+    def get_characters_count(self) -> int:
+        """获取可用角色数量"""
+        return len(self._character_presets)
+    
+    def reload_character_data(self) -> None:
+        """重新加载角色数据"""
+        self._load_character_data()
 
 
 class CharacterNameGenerator:
@@ -115,4 +236,5 @@ class CharacterNameGenerator:
 
 # 创建全局实例，方便在其他模块中使用
 character_name_generator = CharacterNameGenerator()
+character_data_loader = CharacterDataLoader()
 

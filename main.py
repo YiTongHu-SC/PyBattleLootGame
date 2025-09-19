@@ -7,7 +7,7 @@ import random
 import time
 from typing import Tuple
 
-from src import Player, Battle, game_config, character_name_generator
+from src import Player, Battle, game_config, character_name_generator, character_data_loader
 
 
 def clear_screen():
@@ -54,8 +54,8 @@ def get_player_choice() -> str:
 
 
 def create_preset_characters() -> list:
-    """创建预设角色（从配置文件读取）"""
-    return game_config.get_character_presets()
+    """创建预设角色（从JSON配置文件读取）"""
+    return character_data_loader.get_character_presets()
 
 
 def select_character(characters: list) -> Player:
@@ -82,7 +82,7 @@ def select_character(characters: list) -> Player:
                 char_data = characters[choice - 1]
 
                 # 询问是否使用随机名称
-                print(f"\n已选择角色职业: {char_data['class']}")
+                print(f"\n已选择角色: {char_data['class']}")
                 name_choice = (
                     input("是否使用随机角色名称？(y/n，默认n): ").strip().lower()
                 )
@@ -91,8 +91,6 @@ def select_character(characters: list) -> Player:
                     random_name = character_name_generator.get_random_name()
                     player_name = f"玩家({random_name})"
                     print(f"🎲 随机角色名称: {random_name}")
-                else:
-                    player_name = f"玩家({char_data['name']})"
 
                 get_player_choice = True
 
@@ -123,7 +121,7 @@ def start_battle():
 
     ## 角色选择界面
     print("\n" + "=" * 60)
-    print("选择你的角色:")
+    # print("选择你的角色:")
     player1 = select_character(characters)
     ## 随机敌人
     enemy_data = random.choice(characters)

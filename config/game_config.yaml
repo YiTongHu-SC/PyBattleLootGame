@@ -14,30 +14,3 @@ display:
   health_bar_length: 20
   auto_advance_battle: false
   battle_delay_seconds: 1
-
-# 预设角色属性
-characters:
-  - class: "剑士"
-    health: 100
-    attack: 25
-    defense: 8
-  - class: "法师"
-    health: 80
-    attack: 35
-    defense: 5
-  - class: "弓箭手"
-    health: 90
-    attack: 30
-    defense: 6
-  - class: "盾卫"
-    health: 120
-    attack: 20
-    defense: 12
-  - class: "刺客"
-    health: 70
-    attack: 40
-    defense: 4
-  - class: "圣骑士"
-    health: 110
-    attack: 22
-    defense: 10
