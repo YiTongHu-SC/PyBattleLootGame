@@ -30,6 +30,7 @@ class Player:
         self.defense = defense
         self.is_alive = True
         self.pre_name = ""  # 称号前缀
+        self.last_name = self.name.split("·")[-1]  # 名称后缀
 
     def take_damage(self, damage: int) -> int:
         """
@@ -74,8 +75,8 @@ class Player:
         actual_damage = target.take_damage(base_damage)
 
         return {
-            "attacker": self.name,
-            "target": target.name,
+            "attacker": f"{self.pre_name} {self.last_name}",
+            "target": f"{target.pre_name} {target.last_name}",
             "base_damage": base_damage,
             "actual_damage": actual_damage,
             "is_critical": is_critical,
