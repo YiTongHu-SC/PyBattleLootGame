@@ -12,13 +12,14 @@ from .player import Player
 class Battle:
     """1v1战斗类"""
 
-    def __init__(self, player1: Player, player2: Player):
+    def __init__(self, player1: Player, player2: Player, log_func=print):
         """
         初始化战斗
 
         Args:
             player1: 玩家1
             player2: 玩家2
+            log_func: 日志输出函数（默认print）
         """
         self.player1 = player1
         self.player2 = player2
@@ -26,6 +27,7 @@ class Battle:
         self.round_number = 0
         self.winner: Optional[Player] = None
         self.battle_ended = False
+        self.log_func = log_func
 
     def determine_turn_order(self) -> List[Player]:
         """
@@ -88,9 +90,9 @@ class Battle:
         Returns:
             战斗结果
         """
-        print(f"\n🔥 战斗开始！🔥")
-        print(f"{self.player1.get_full_name()} VS {self.player2.get_full_name()}")
-        print("=" * 60)
+        self.log_func(f"\n🔥 战斗开始！🔥")
+        self.log_func(f"{self.player1.get_full_name()} VS {self.player2.get_full_name()}")
+        self.log_func("=" * 60)
 
         # 显示初始状态
         self._display_battle_status()
@@ -99,7 +101,7 @@ class Battle:
             if not self.auto_advance:
                 choice = input("\n回车键继续下一回合（输入A进入自动模式）...")
                 if choice.strip().lower() == "a":
-                    print("进入自动战斗模式...")
+                    self.log_func("进入自动战斗模式...")
                     self.auto_advance = True
                 else:
                     self.auto_advance = False
@@ -122,21 +124,21 @@ class Battle:
     def _display_battle_status(self):
         """显示战斗状态"""
         if self.round_number == 0:
-            print("\n📊 对战信息:")
+            self.log_func("\n📊 对战信息:")
         else:
-            print(f"\n📊 第{self.round_number}回合后状态:")
-        print("-" * 60)
-        print(self.player1)
-        print()
-        print(self.player2)
-        print("-" * 60)
+            self.log_func(f"\n📊 第{self.round_number}回合后状态:")
+        self.log_func("-" * 60)
+        self.log_func(str(self.player1))
+        self.log_func("")
+        self.log_func(str(self.player2))
+        self.log_func("-" * 60)
 
     def _display_round_result(self, round_result: Dict[str, Any]):
         """显示回合结果"""
         if "error" in round_result:
             return
 
-        print(f"\n⚔️  第{round_result['round']}回合:")
+        self.log_func(f"\n⚔️  第{round_result['round']}回合:")
 
         for action in round_result["actions"]:
             attacker = action["attacker"]
@@ -145,22 +147,20 @@ class Battle:
             is_critical = action["is_critical"]
 
             crit_text = " 💥暴击！" if is_critical else ""
-            print(f"   {attacker} 攻击 {target}，造成 {damage} 点伤害{crit_text}")
+            self.log_func(f"   {attacker} 攻击 {target}，造成 {damage} 点伤害{crit_text}")
 
             if not action["target_alive"]:
-                print(f"   💀 {target} 被击败！")
+                self.log_func(f"   💀 {target} 被击败！")
 
     def _display_battle_end(self, battle_result: Dict[str, Any]):
         """显示战斗结束信息"""
-        print("\n" + "=" * 60)
-
+        self.log_func("\n" + "=" * 60)
         if battle_result["outcome"] == "victory":
-            print(f"🎉 {battle_result['winner']} 获得胜利！")
+            self.log_func(f"🎉 {battle_result['winner']} 获得胜利！")
         elif battle_result["outcome"] == "timeout":
-            print("⏰ 战斗超时，平局！")
-
-        print(f"战斗持续了 {battle_result['total_rounds']} 回合")
-        print("=" * 60)
+            self.log_func("⏰ 战斗超时，平局！")
+        self.log_func(f"战斗持续了 {battle_result['total_rounds']} 回合")
+        self.log_func("=" * 60)
 
     def _generate_battle_result(self, max_rounds: int) -> Dict[str, Any]:
         """生成战斗结果"""

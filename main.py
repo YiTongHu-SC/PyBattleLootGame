@@ -1,11 +1,15 @@
 """
 PyBattleLootGame 主程序入口
-运行1v1战斗模拟游戏
+运行战斗模拟游戏
 """
 
+import os
+from datetime import datetime
 import random
 import time
 from typing import Tuple
+
+from src.tool import Logger
 
 from src import (
     Player,
@@ -64,14 +68,14 @@ def create_preset_characters() -> list:
     return character_data_loader.get_character_presets()
 
 
-def select_character(characters: list) -> Player:
-    """让玩家选择角色"""
-    print(f"\n请选择你的角色职业:")
-    print("-" * 50)
+def select_character(characters: list, log_func=print) -> Player:
+    """让玩家选择角色，所有输出通过 log_func"""
+    log_func(f"\n请选择你的角色职业:")
+    log_func("-" * 50)
 
     ## 展示角色列表
     for i, char in enumerate(characters, 1):
-        print(
+        log_func(
             f"{i}. {char['class']:8} | "
             f"生命值: {char['health']:3} | "
             f"攻击力: {char['attack']:2} | "
@@ -88,7 +92,7 @@ def select_character(characters: list) -> Player:
                 char_data = characters[choice - 1]
 
                 # 询问是否使用随机名称
-                print(f"\n已选择角色: {char_data['class']}")
+                log_func(f"\n已选择角色: {char_data['class']}")
                 name_choice = (
                     input("是否使用随机角色名称？(y/n，默认n): ").strip().lower()
                 )
@@ -96,20 +100,20 @@ def select_character(characters: list) -> Player:
                 if name_choice in ["y", "yes", "Y", "是"]:
                     random_name = character_name_generator.get_random_name()
                     player_name = f"{random_name}"
-                    print(f"🎲 随机角色名称: {random_name}")
+                    log_func(f"🎲 随机角色名称: {random_name}")
 
                 get_player_choice = True
 
             else:
-                print(f"❌ 请输入1到{len(characters)}之间的数字")
+                log_func(f"❌ 请输入1到{len(characters)}之间的数字")
         except ValueError:
-            print("❌ 请输入有效的数字")
+            log_func("❌ 请输入有效的数字")
 
     ## 角色名字
     while not player_name:
         player_name = input("请输入你的角色名字: ").strip()
         if not player_name:
-            print("❌ 角色名字不能为空，请重新输入。")
+            log_func("❌ 角色名字不能为空，请重新输入。")
 
     return Player(
         name=player_name,
@@ -118,19 +122,25 @@ def select_character(characters: list) -> Player:
         attack=char_data["attack"],
         defense=char_data["defense"],
     )
-    pass  # 这一行理论上不会被执行到
 
 
 def start_battle():
     """开始战斗"""
     characters = create_preset_characters()
 
-    ## 角色选择界面
-    print("\n" + "=" * 60)
-    # print("选择你的角色:")
-    player1 = select_character(characters)
+    # 创建唯一 log 文件名
+    log_dir = os.path.join(os.path.dirname(__file__), "logs")
+    os.makedirs(log_dir, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_file_path = os.path.join(log_dir, f"battle_{timestamp}.log")
+    logger = Logger(log_file_path)
+    log_func = logger.get_log_func()
+
+    # 角色选择界面
+    log_func("\n" + "=" * 60)
+    player1 = select_character(characters, log_func=log_func)
     player1.pre_name = "【玩家】"
-    ## 随机敌人
+    # 随机敌人
     enemy_data = random.choice(characters)
     enemy_name = character_name_generator.get_random_name(player1.name)
     enemy = Player(
@@ -141,14 +151,16 @@ def start_battle():
         defense=enemy_data["defense"],
     )
     # 创建并开始战斗
-    battle = Battle(player1, enemy)
+    battle = Battle(player1, enemy, log_func=log_func)
     battle_result = battle.fight_until_end()
 
     # 显示战斗摘要
     summary = battle.get_battle_summary()
-    print(f"\n📊 战斗统计:")
-    print(f"   {player1.name} 总伤害: {summary['player1_damage_dealt']}")
-    print(f"   {enemy.name} 总伤害: {summary['player2_damage_dealt']}")
+    log_func(f"\n📊 战斗统计:")
+    log_func(f"   {player1.name} 总伤害: {summary['player1_damage_dealt']}")
+    log_func(f"   {enemy.name} 总伤害: {summary['player2_damage_dealt']}")
+    log_func(f"战斗日志已保存到: {log_file_path}")
+    logger.close()
 
 
 def show_game_info():
