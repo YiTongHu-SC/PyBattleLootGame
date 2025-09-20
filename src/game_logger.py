@@ -35,8 +35,8 @@ class LogLevel(IntEnum):
 
 class Environment(IntEnum):
     """运行环境枚举"""
-    DEVELOPMENT = 1   # 开发环境
-    DEBUG = 0         # 开发调试模式
+    DEVELOPMENT = 0   # 开发环境
+    DEBUG = 1         # 开发调试模式
     TESTING = 2       # 调试运行环境
     PRODUCTION = 3    # 正式运行环境
 
@@ -57,7 +57,13 @@ class DebugLogger:
         self.config = self._load_config(config_path)
         
         # 设置基础属性
-        self.environment = self._detect_environment(environment)
+        if environment:
+            self.environment = self._detect_environment(environment)
+        elif self.config.get('environment'):
+            self.environment = self._detect_environment(self.config.get('environment'))
+        else:
+            self.environment = self._detect_environment()
+
         self.min_level = min_level if min_level is not None else self._get_config_min_level()
         self.enabled = self._get_config_bool('display.enabled', True)
         self.show_timestamp = self._get_config_bool('display.show_timestamp', True)

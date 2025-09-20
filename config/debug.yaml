@@ -3,11 +3,11 @@
 
 # 运行环境设置
 # 可选值: development, debug, testing, production
-# debug: 开发调试模式 (显示0级及以上)  
-# development: 开发环境 (显示1级及以上)
+# development: 开发环境 (显示0级及以上)
+# debug: 开发调试模式 (显示1级及以上)  
 # testing: 调试运行环境 (显示2级及以上)
 # production: 正式运行环境 (显示3级及以上)
-environment: debug
+environment: development
 
 # 最小输出等级 (可选，会覆盖环境默认等级)
 # 可选值: 0, 1, 2, 3
