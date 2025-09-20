@@ -42,7 +42,7 @@
 
 ## 📁 文件结构
 
-```
+``` shell
 src/game_logger.py          # 主要实现文件
 config/debug.yaml           # 配置文件
 test/test_debug_logger.py   # 基础测试

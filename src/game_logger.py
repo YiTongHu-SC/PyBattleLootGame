@@ -72,7 +72,14 @@ class DebugLogger:
         
         # 颜色配置
         self.colors = self._get_color_config()
-        self.reset_color = self.config.get('colors', {}).get('reset', '\033[0m')
+        reset_color = self.config.get('colors', {}).get('reset', '\033[0m')
+        # 处理reset颜色的转义序列
+        if isinstance(reset_color, str):
+            if '\x0033[' in reset_color:
+                reset_color = reset_color.replace('\x0033[', '\x1b[')
+            elif '\x00' in reset_color:
+                reset_color = reset_color.replace('\x00', '\x1b')
+        self.reset_color = reset_color
         
         # 等级标识符配置
         self.level_labels = self._get_level_labels_config()
@@ -137,12 +144,34 @@ class DebugLogger:
     def _get_color_config(self) -> Dict[LogLevel, str]:
         """获取颜色配置"""
         color_config = self.config.get('colors', {})
-        return {
-            LogLevel.VERBOSE: color_config.get('verbose', '\033[37m'),
-            LogLevel.DEBUG: color_config.get('debug', '\033[36m'),
-            LogLevel.INFO: color_config.get('info', '\033[33m'),
-            LogLevel.CRITICAL: color_config.get('critical', '\033[31m'),
+        
+        # 默认颜色配置
+        default_colors = {
+            LogLevel.VERBOSE: '\033[37m',    # 白色
+            LogLevel.DEBUG: '\033[36m',      # 青色
+            LogLevel.INFO: '\033[33m',       # 黄色
+            LogLevel.CRITICAL: '\033[31m',   # 红色
         }
+        
+        # 从配置文件读取颜色，如果读取失败则使用默认值
+        result = {}
+        for level, default_color in default_colors.items():
+            config_key = level.name.lower()
+            config_color = color_config.get(config_key, default_color)
+            
+            # 处理YAML解析的转义序列问题
+            if isinstance(config_color, str):
+                # 修复YAML中转义序列的问题
+                # YAML将\033解析为\x00+33，需要修复为正确的ESC序列
+                if '\x0033[' in config_color:
+                    config_color = config_color.replace('\x0033[', '\x1b[')
+                elif '\x00' in config_color:
+                    config_color = config_color.replace('\x00', '\x1b')
+                result[level] = config_color
+            else:
+                result[level] = default_color
+                
+        return result
     
     def _get_level_labels_config(self) -> Dict[LogLevel, str]:
         """获取等级标签配置"""
@@ -203,25 +232,30 @@ class DebugLogger:
         if os.getenv('FORCE_COLOR'):
             return True
         
-        # 检查是否在支持颜色的终端中
+        # Windows终端颜色支持
+        if os.name == 'nt':
+            try:
+                # 启用Windows控制台的ANSI颜色支持
+                import ctypes
+                kernel32 = ctypes.windll.kernel32
+                handle = kernel32.GetStdHandle(-11)  # STD_OUTPUT_HANDLE
+                mode = ctypes.c_ulong()
+                kernel32.GetConsoleMode(handle, ctypes.byref(mode))
+                # 启用虚拟终端处理 (ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004)
+                kernel32.SetConsoleMode(handle, mode.value | 0x0004)
+                return True
+            except:
+                # 如果无法启用ANSI，则禁用颜色
+                return False
+        
+        # Unix/Linux系统通常支持颜色
         try:
             if hasattr(sys.stdout, 'isatty') and sys.stdout.isatty():
                 return True
         except:
             pass
         
-        # Windows终端颜色支持检查
-        if os.name == 'nt':
-            try:
-                # 启用Windows控制台的ANSI颜色支持
-                import ctypes
-                kernel32 = ctypes.windll.kernel32
-                kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
-                return True
-            except:
-                return False
-        
-        return True
+        return False
     
     def _get_caller_info(self) -> str:
         """获取调用者信息"""
