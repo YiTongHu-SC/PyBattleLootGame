@@ -37,13 +37,8 @@ def clear_screen():
 
 def display_title():
     """显示游戏标题"""
-    title = """
-    ╔═══════════════════════════════════════════════════╗
-                    PyBattleLootGame                         
-                      终端战斗模拟器                            
-    ╚═══════════════════════════════════════════════════╝
-    """
-    print(title)
+    game_logo_title = game_config.game_info.get("game_logo_title", "终端地下城")
+    print(game_logo_title)
 
 
 def get_player_choice() -> str:
@@ -163,15 +158,26 @@ def start_battle():
     logger.close()
 
 
-def show_game_info():
+def show_game_guide():
     """显示游戏说明"""
-    info = game_config.get_game_info()
-    print(info)
+    game_guide = game_config.game_info.get("game_guide", "")
+    print(game_guide)
     input("\n按回车键返回主菜单...")
 
 
 def main():
     """主函数"""
+    if not character_data_loader.all_load_success:
+        print("❌ 角色数据加载失败，无法启动游戏。请检查配置文件。")
+        return
+    if not character_name_generator.all_load_success:
+        print("❌ 角色名称数据加载失败，无法启动游戏。请检查配置文件。")
+        return
+    if character_data_loader.get_characters_count() == 0:
+        print("❌ 没有可用的角色预制数据，无法启动游戏。请检查配置文件。")
+        return
+    print("欢迎来到 地下城 世界")
+    time.sleep(1)
     while True:
         time.sleep(0.2)
         clear_screen()
@@ -185,10 +191,10 @@ def main():
 
         elif choice == "2":
             clear_screen()
-            show_game_info()
+            show_game_guide()
 
         elif choice == "3":
-            print("\n👋 感谢游玩 PyBattleLootGame！")
+            print(f"\n {game_config.game_info.get('game_exit', '')}")
             break
 
 

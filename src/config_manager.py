@@ -19,6 +19,7 @@ class GameConfig:
         Args:
             config_path: 配置文件路径，如果为None则使用默认路径
         """
+        self.all_load_success = True
         if config_path is None:
             # 使用资源路径处理函数获取配置文件路径
             config_path = get_resource_path("config/game_config.yaml")
@@ -26,6 +27,23 @@ class GameConfig:
         self.config_path = config_path
         self.config = {}
         self.load_config()
+        self.game_info = {}
+        self.load_game_info()
+
+    def load_game_info(self):
+        """加载游戏说明信息"""
+        try:
+            game_info_path = get_resource_path("config/game_info.yaml")
+            if os.path.exists(game_info_path):
+                with open(game_info_path, "r", encoding="utf-8") as f:
+                    self.game_info = yaml.safe_load(f) or {}
+            else:
+                self.all_load_success = False
+                print("警告: 游戏说明文件不存在")
+        except Exception as e:
+            self.all_load_success = False
+            print(f"警告: 加载游戏说明文件失败 ({e})")
+        pass
 
     def load_config(self):
         """加载YAML配置文件"""
@@ -39,6 +57,7 @@ class GameConfig:
         except Exception as e:
             print(f"警告: 加载配置文件失败 ({e})，使用默认设置")
             self._create_default_config()
+            self.all_load_success = False
 
     def _create_default_config(self):
         """创建默认配置"""
@@ -116,27 +135,6 @@ class GameConfig:
             self.config[section][key] = value
         else:
             self.config[section] = {key: value}
-
-    def get_game_info(self) -> str:
-        """从YAML配置文件获取游戏说明信息"""
-        try:
-            # 使用资源路径处理函数获取游戏说明配置文件路径
-            info_config_path = get_resource_path("config/game_info.yaml")
-
-            if os.path.exists(info_config_path):
-                with open(info_config_path, "r", encoding="utf-8") as f:
-                    info_config = yaml.safe_load(f) or {}
-
-                game_info = info_config.get("game_info", {})
-                content = game_info.get("content", "")
-                if content:
-                    return content
-
-            # 文件读取失败
-            return "警告：文件读取失败"
-
-        except Exception as e:
-            return "警告：文件读取失败"
 
 
 # 全局配置实例

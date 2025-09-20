@@ -25,6 +25,7 @@ class CharacterDataLoader:
 
         self.data_file_path = data_file_path
         self._character_presets: List[Dict[str, Any]] = []
+        self.all_load_success = True
         self._load_character_data()
 
     def _load_character_data(self) -> None:
@@ -35,6 +36,7 @@ class CharacterDataLoader:
                 self._character_presets = data.get("character_presets", [])
 
             if not self._character_presets:
+                self.all_load_success = False
                 raise ValueError("角色预制数据为空")
 
             # 验证每个角色数据的完整性
@@ -58,6 +60,7 @@ class CharacterDataLoader:
             print(f"✅ 成功加载 {len(self._character_presets)} 个角色预制数据")
 
         except FileNotFoundError:
+            self.all_load_success = False
             print(f"❌ 找不到角色数据配置文件: {self.data_file_path}")
             # 提供默认角色数据作为备选
             self._character_presets = [
@@ -71,9 +74,11 @@ class CharacterDataLoader:
             print("🔄 使用默认角色数据")
 
         except json.JSONDecodeError as e:
+            self.all_load_success = False
             print(f"❌ JSON配置文件格式错误: {e}")
 
         except Exception as e:
+            self.all_load_success = False
             print(f"❌ 加载角色数据时发生错误: {e}")
 
     def get_character_presets(self) -> List[Dict[str, Any]]:
@@ -146,6 +151,7 @@ class CharacterNameGenerator:
 
         self.data_file_path = data_file_path
         self._character_names: List[str] = []
+        self.all_load_success = True
         self._load_names()
 
     def _load_names(self) -> None:
@@ -161,6 +167,7 @@ class CharacterNameGenerator:
             print(f"✅ 成功加载 {len(self._character_names)} 个角色名称")
 
         except FileNotFoundError:
+            self.all_load_success = False
             print(f"❌ 找不到角色名称配置文件: {self.data_file_path}")
             # 提供默认名称作为备选
             self._character_names = [
@@ -173,10 +180,12 @@ class CharacterNameGenerator:
             print("🔄 使用默认角色名称列表")
 
         except json.JSONDecodeError as e:
+            self.all_load_success = False
             print(f"❌ JSON配置文件格式错误: {e}")
             self._character_names = ["未命名角色"]
 
         except Exception as e:
+            self.all_load_success = False
             print(f"❌ 加载角色名称时发生错误: {e}")
             self._character_names = ["错误角色"]
 
