@@ -9,6 +9,8 @@ class DungeonMaster:
     def __init__(self, game_info):
         self.game_info = game_info
         self.logger = Logger()
+        self.dm_name = self.game_info.get("dungeon_dm", "DM")
+        self.dm_name_en = self.game_info.get("dungeon_dm_en", "DM")
 
     def init_logger(self, log_file_path):
         self.logger.init_logger(log_file_path)
@@ -29,7 +31,9 @@ class DungeonMaster:
         exit_message = self.game_info.get("game_exit", "感谢游玩！")
         self.print_message(exit_message)
 
-    def input_prompt(self, prompt: str) -> str:
+    def input_prompt(self, prompt: str, with_dm: bool = False) -> str:
+        if with_dm:
+            prompt = f"{self.dm_name}{':'}{prompt}"
         return input(f"\n{prompt}").strip()
 
     def print_message(self, message: str):
@@ -40,7 +44,7 @@ class DungeonMaster:
         """
         print(message)
 
-    def log_message(self, message: str):
+    def log_message(self, message: str, with_dm: bool = False):
         """记录日志信息
 
         Args:
@@ -48,6 +52,8 @@ class DungeonMaster:
         """
         if not self.logger:
             raise ValueError("Logger 未初始化，请先调用 init_logger 方法")
+        if with_dm:
+            message = f"{self.dm_name}{':'}{message}"
         self.logger.log(message)
 
     def close_logger(self):
