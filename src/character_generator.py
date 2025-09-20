@@ -6,6 +6,7 @@ import json
 import random
 import os
 from typing import Dict, List, Optional, Any
+from .resource_path import get_resource_path
 
 
 class CharacterDataLoader:
@@ -19,10 +20,8 @@ class CharacterDataLoader:
             data_file_path: character_data.json 文件路径，如果为None则使用默认路径
         """
         if data_file_path is None:
-            # 默认路径：从src目录向上查找data目录
-            current_dir = os.path.dirname(__file__)
-            project_root = os.path.dirname(current_dir)
-            data_file_path = os.path.join(project_root, "data", "character_data.json")
+            # 使用资源路径处理函数获取数据文件路径
+            data_file_path = get_resource_path("data/character_data.json")
 
         self.data_file_path = data_file_path
         self._character_presets: List[Dict[str, Any]] = []
@@ -142,10 +141,8 @@ class CharacterNameGenerator:
             data_file_path: character_names.json 文件路径，如果为None则使用默认路径
         """
         if data_file_path is None:
-            # 默认路径：从src目录向上查找data目录
-            current_dir = os.path.dirname(__file__)
-            project_root = os.path.dirname(current_dir)
-            data_file_path = os.path.join(project_root, "data", "character_names.json")
+            # 使用资源路径处理函数获取数据文件路径
+            data_file_path = get_resource_path("data/character_names.json")
 
         self.data_file_path = data_file_path
         self._character_names: List[str] = []

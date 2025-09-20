@@ -6,6 +6,7 @@
 import yaml
 import os
 from typing import Dict, Any, List, Optional
+from .resource_path import get_resource_path
 
 
 class GameConfig:
@@ -19,9 +20,8 @@ class GameConfig:
             config_path: 配置文件路径，如果为None则使用默认路径
         """
         if config_path is None:
-            # 默认配置文件路径
-            project_root = os.path.dirname(os.path.dirname(__file__))
-            config_path = os.path.join(project_root, "config", "game_config.yaml")
+            # 使用资源路径处理函数获取配置文件路径
+            config_path = get_resource_path("config/game_config.yaml")
 
         self.config_path = config_path
         self.config = {}
@@ -120,9 +120,8 @@ class GameConfig:
     def get_game_info(self) -> str:
         """从YAML配置文件获取游戏说明信息"""
         try:
-            # 游戏说明配置文件路径
-            project_root = os.path.dirname(os.path.dirname(__file__))
-            info_config_path = os.path.join(project_root, "config", "game_info.yaml")
+            # 使用资源路径处理函数获取游戏说明配置文件路径
+            info_config_path = get_resource_path("config/game_info.yaml")
 
             if os.path.exists(info_config_path):
                 with open(info_config_path, "r", encoding="utf-8") as f:
