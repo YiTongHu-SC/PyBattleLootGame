@@ -3,6 +3,7 @@ PyBattleLootGame 源代码包
 """
 
 from .tool import Logger
+from .dungeon_master import DungeonMaster
 from .player import Player
 from .battle import Battle
 from .config_manager import GameConfig, game_config
@@ -25,4 +26,6 @@ __all__ = [
     "character_name_generator",
     "CharacterDataLoader",
     "character_data_loader",
+    "DungeonMaster",
+    "Logger",
 ]
