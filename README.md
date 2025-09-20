@@ -64,3 +64,19 @@ PyBattleLootGame/
 ```bash
 python test_quick.py
 ```
+
+## 测试
+
+4级调试输出系统：
+
+0级 (VERBOSE): 详细调试信息 - 开发环境显示
+1级 (DEBUG): 一般调试信息 - 开发调试模式及以上显示
+2级 (INFO): 重要信息 - 调试运行环境及以上显示
+3级 (CRITICAL): 关键信息 - 所有环境显示
+
+4种环境模式：
+
+开发环境 (development) - 显示所有等级
+开发调试模式 (debug) - 显示1级及以上
+调试运行环境 (testing) - 显示2级及以上
+正式运行环境 (production) - 仅显示3级

@@ -13,6 +13,13 @@ from .character_generator import (
     CharacterDataLoader,
     character_data_loader,
 )
+from .game_logger import (
+    debug_logger,
+    verbose, debug, info, critical,
+    set_debug_level, set_debug_environment,
+    enable_debug, disable_debug, debug_status,
+    LogLevel, Environment
+)
 
 __version__ = "1.0.0"
 __author__ = "PyBattleLootGame Developer"
@@ -28,4 +35,10 @@ __all__ = [
     "character_data_loader",
     "DungeonMaster",
     "Logger",
+    # 调试工具
+    "debug_logger",
+    "verbose", "debug", "info", "critical",
+    "set_debug_level", "set_debug_environment",
+    "enable_debug", "disable_debug", "debug_status",
+    "LogLevel", "Environment",
 ]

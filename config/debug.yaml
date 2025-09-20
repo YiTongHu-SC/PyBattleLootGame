@@ -1,0 +1,52 @@
+# 调试工具配置文件
+# 用于控制 game_logger 的调试输出行为
+
+# 运行环境设置
+# 可选值: development, debug, testing, production
+# debug: 开发调试模式 (显示0级及以上)  
+# development: 开发环境 (显示1级及以上)
+# testing: 调试运行环境 (显示2级及以上)
+# production: 正式运行环境 (显示3级及以上)
+environment: debug
+
+# 最小输出等级 (可选，会覆盖环境默认等级)
+# 可选值: 0, 1, 2, 3
+# 0: 详细调试信息
+# 1: 一般调试信息
+# 2: 重要信息
+# 3: 关键信息
+# min_level: 1
+
+# 显示选项
+display:
+  # 是否启用调试输出
+  enabled: true
+  
+  # 是否显示时间戳
+  show_timestamp: true
+  
+  # 是否显示调用者信息 (文件名:函数名():行号)
+  show_caller: true
+  
+  # 是否启用颜色输出
+  color_enabled: true
+
+# 输出格式
+format:
+  # 时间戳格式 (Python strftime格式)
+  timestamp_format: "%H:%M:%S.%f"
+  
+  # 等级标签
+  level_labels:
+    verbose: "[VERBOSE]"
+    debug: "[DEBUG]"  
+    info: "[INFO]"
+    critical: "[CRITICAL]"
+
+# 颜色配置 (ANSI颜色代码)
+colors:
+  verbose: "\033[37m"    # 白色
+  debug: "\033[36m"      # 青色
+  info: "\033[33m"       # 黄色
+  critical: "\033[31m"   # 红色
+  reset: "\033[0m"       # 重置
